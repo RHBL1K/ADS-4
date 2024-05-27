@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -8,25 +10,18 @@ public class Main {
         Search<String> djk = new DijkstraSearch<>(weightedGraph, "Almaty");
         outputPath(djk, "Kyzylorda");
 
-
         System.out.println("--------------------------------");
 
         MyGraph<String> graph = new MyGraph<>(true);
         fillWithoutWeights(graph);
-
-        System.out.println("DFS:");
-        Search<String> dfs = new DepthFirstSearch<>(graph, "Almaty");
-        outputPath(dfs, "Kyzylorda");
-
-        System.out.println("--------------------------------");
 
         System.out.println("BFS:");
         Search<String> bfs = new BreadthFirstSearch<>(graph, "Almaty");
         outputPath(bfs, "Kyzylorda");
     }
 
-    public static void fillWithoutWeights(MyGraph<String> graph) {
-        graph.addEdge("Almaty", "Astana"); // 16 - 19
+    public static void fillWithoutWeights(Graph<String> graph) {
+        graph.addEdge("Almaty", "Astana");
         graph.addEdge("Shymkent", "Atyrau");
         graph.addEdge("Atyrau", "Astana");
         graph.addEdge("Almaty", "Shymkent");
@@ -46,10 +41,14 @@ public class Main {
     }
 
     public static void outputPath(Search<String> search, String key) {
-        for (String v : search.pathTo(key)) {
-            System.out.print(v + " -> ");
+        Iterable<String> path = search.pathTo(key);
+        if (path != null && path.iterator().hasNext()) {
+            for (String v : path) {
+                System.out.print(v + " -> ");
+            }
+            System.out.println();
+        } else {
+            System.out.println("No path found");
         }
-
-        System.out.println();
     }
 }

@@ -1,30 +1,44 @@
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
-public class BreadthFirstSearch<Vertex> extends Search<Vertex>{
-    public BreadthFirstSearch(MyGraph<Vertex> graph, Vertex source) {
-        super(source);
+public class BreadthFirstSearch<V> implements Search<V> {
+    private Map<V, V> edgeTo;
+    private V source;
 
+    public BreadthFirstSearch(Graph<V> graph, V sourceData) {
+        this.edgeTo = new HashMap<>();
+        this.source = sourceData;
         bfs(graph, source);
     }
 
-    private void bfs(MyGraph<Vertex> graph, Vertex current) {
-        marked.add(current);
-
-
-        Queue<Vertex> queue = new LinkedList<>();
-        queue.add(current); //[0]
-
+    private void bfs(Graph<V> graph, V source) {
+        Queue<V> queue = new LinkedList<>();
+        Set<V> visited = new HashSet<>();
+        queue.offer(source);
+        visited.add(source);
         while (!queue.isEmpty()) {
-            Vertex v = queue.remove(); // []
-
-            for (Vertex vertex : graph.adjacencyList(v)) {
-                if (!marked.contains(vertex)) {
-                    marked.add(vertex);
-                    edgeTo.put(vertex, v); // {[1,0] [2,0] [3,0] [4 0] [5 1] [6 1] [7 2]}
-                    queue.add(vertex); // [1,2,3,4]
+            V current = queue.poll();
+            for (V neighbor : graph.adjacencyList(current)) {
+                if (!visited.contains(neighbor)) {
+                    edgeTo.put(neighbor, current);
+                    queue.offer(neighbor);
+                    visited.add(neighbor);
                 }
             }
         }
+    }
+
+    @Override
+    public Iterable<V> pathTo(V destinationData) {
+        List<V> path = new ArrayList<>();
+        if (!edgeTo.containsKey(destinationData) && !destinationData.equals(source)) {
+            return path;
+        }
+
+        for (V vertex = destinationData; vertex != null; vertex = edgeTo.get(vertex)) {
+            path.add(vertex);
+        }
+
+        Collections.reverse(path);
+        return path;
     }
 }

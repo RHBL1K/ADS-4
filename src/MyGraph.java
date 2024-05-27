@@ -1,8 +1,8 @@
 import java.util.*;
 
-public class MyGraph<Vertex> extends WeightedGraph<Vertex>{
+public class MyGraph<V> implements Graph<V> {
     private final boolean undirected;
-    private final Map<Vertex, List<Vertex>> map = new HashMap<>();
+    private final Map<V, List<V>> map = new HashMap<>();
 
     public MyGraph() {
         this(true);
@@ -12,22 +12,23 @@ public class MyGraph<Vertex> extends WeightedGraph<Vertex>{
         this.undirected = undirected;
     }
 
-    public void addVertex(Vertex v) {
+    @Override
+    public void addVertex(V v) {
         if (hasVertex(v))
             return;
 
         map.put(v, new LinkedList<>());
     }
 
-    public void addEdge(Vertex source, Vertex dest) {
+    @Override
+    public void addEdge(V source, V dest) {
         if (!hasVertex(source))
             addVertex(source);
 
         if (!hasVertex(dest))
             addVertex(dest);
 
-        if (hasEdge(source, dest)
-                || source.equals(dest))
+        if (hasEdge(source, dest) || source.equals(dest))
             return; // reject parallels & self-loops
 
         map.get(source).add(dest);
@@ -42,7 +43,7 @@ public class MyGraph<Vertex> extends WeightedGraph<Vertex>{
 
     public int getEdgesCount() {
         int count = 0;
-        for (Vertex v : map.keySet()) {
+        for (V v : map.keySet()) {
             count += map.get(v).size();
         }
 
@@ -52,17 +53,17 @@ public class MyGraph<Vertex> extends WeightedGraph<Vertex>{
         return count;
     }
 
-
-    public boolean hasVertex(Vertex v) {
+    public boolean hasVertex(V v) {
         return map.containsKey(v);
     }
 
-    public boolean hasEdge(Vertex source, Vertex dest) {
+    public boolean hasEdge(V source, V dest) {
         if (!hasVertex(source)) return false;
         return map.get(source).contains(dest);
     }
 
-    public List<Vertex> adjacencyList(Vertex v) {
+    @Override
+    public List<V> adjacencyList(V v) {
         if (!hasVertex(v)) return null;
 
         return map.get(v);
